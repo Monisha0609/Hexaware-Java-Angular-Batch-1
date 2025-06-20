@@ -1,0 +1,670 @@
+PL SQL -PRACTICE TEST
+
+//Creating Restaurant table
+
+Create Table Restaurant(
+	RestaurantId Number Primary Key,
+	RestaurantName Varchar2(30),
+	City Varchar2(30),
+	Email Varchar2(30),
+	Mobile varchar2(15),
+	Rating Number(9,2)
+);
+
+
+-------------------------------------------------------------------------------------------------------------
+
+//Creating Table RestaurantBackup
+
+Create Table RestaurantBackup (
+	RbId Number Primary Key,
+	RestaurantId Number,
+	RestaurantName varchar2 (30),
+	City varchar2(30),
+        Email varchar2(30),
+        Mobile VARCHAR2(15),
+        Rating Number(9,2),
+        Operation varchar2(30),
+        ActivityOn Date Default Sysdate
+);
+
+
+-------------------------------------------------------------------------------------------------------------
+
+//Create Sequence for Backup Table
+
+Create Sequence RestaurantBackup_seq Start With 1 increment By 1;
+
+-------------------------------------------------------------------------------------------------------------
+
+//Stored Procedures
+
+Create or Replace Procedure AddRestaurant (
+    R_id in Number,
+    R_name in Varchar2,
+    R_city in Varchar2,
+    R_email in Varchar2,
+    R_mobile in Varchar2,
+    R_rating in Number
+)
+IS
+BEGIN
+    Insert Into Restaurant Values (R_id, R_name, R_city, R_email, R_mobile, R_rating);
+    dbms_output.put_line('Restaurant added successfully.');
+EXCEPTION
+    When Others Then
+        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END;
+/
+
+
+--------------------------------------------------------------------------------------------------------------
+
+//Inserting Values 
+
+BEGIN
+  AddRestaurant(1, 'Flavors Of South', 'Chennai', 'flavors@gmail.com', '9876501234', 4.3);
+  AddRestaurant(2, 'Spices Point', 'Bangalore', 'spicespoint@gmail.com', '9854321000', 4.6);
+  AddRestaurant(3, 'Pizza Palace', 'Mumbai', 'pizza@gmail.com', '9988776655', 4.1);
+END;
+/
+
+
+
+
+Output:
+
+
+RESTAURANTID RESTAURANTNAME                 CITY
+------------ ------------------------------ ------------------------------
+EMAIL                          MOBILE              RATING
+------------------------------ --------------- ----------
+           1 Flavors Of South               Chennai
+flavors@gmail.com              9876501234             4.3
+
+           2 Spices Point                   Bangalore
+spicespoint@gmail.com          9854321000             4.6
+
+           3 Pizza Palace                   Mumbai
+pizza@gmail.com                9988776655             4.1
+
+--------------------------------------------------------------------------------------------------------------
+
+
+
+//SearchByRestaurantId Procedure
+
+Create or Replace Procedure SearchByRestaurantId(
+  R_id In Number
+)
+Is 
+V_name Restaurant.RestaurantName%Type;
+V_city Restaurant.City%Type;
+V_email Restaurant.Email%Type;
+V_mobile Restaurant.Mobile%Type;
+V_rating Restaurant.Rating%Type;
+BEGIN
+  Select RestaurantName,City,Email,Mobile,Rating
+  Into V_name, V_city, V_email, V_mobile, V_rating
+  From Restaurant Where RestaurantId =R_id;
+  
+  dbms_output.put_line('Name: ' || V_name);
+  dbms_output.put_line('City: ' || V_city);
+  dbms_output.put_line('Email: ' || V_email);
+  dbms_output.put_line('Mobile: ' || V_mobile);
+  dbms_output.put_line('Rating: ' || V_rating);
+EXCEPTION
+  When NO_DATA_FOUND Then
+        dbms_output.put_line('No restaurant found with ID: ' || R_id);
+END;
+/
+
+
+EXEC SearchByRestaurantId(1);
+
+
+
+Output:
+
+SQL> EXEC SearchByRestaurantId(1);
+Name: Flavors Of South
+City: Chennai
+Email: flavors@gmail.com
+Mobile: 9876501234
+Rating: 4.3
+
+PL/SQL procedure successfully completed.
+------------------------------------------------------------------------------------------------------------
+
+//UpdateRestaurant Procedure
+
+Create Or Replace Procedure UpdateRestaurant(
+  R_id In Number,
+  R_name In Varchar2,
+  R_city In Varchar2,
+  R_email In Varchar2,
+  R_mobile In Varchar2,
+  R_rating In Number
+)
+Is
+Begin
+  Update Restaurant
+  Set RestaurantName = R_name,
+      City = R_city,
+      Email = R_email,
+      Mobile = R_mobile,
+      Rating = R_rating
+  Where RestaurantId = R_id;
+
+  If Sql%Rowcount = 0 Then
+    dbms_output.put_line('No restaurant found to update.');
+  Else
+    dbms_output.put_line('Restaurant updated successfully.');
+  End If;
+End;
+/
+
+
+
+Exec UpdateRestaurant(3, 'Pizza Paradise', 'Mumbai', 'paradise@gmail.com', '9988776655', 4.4);
+
+Output:
+
+
+SQL> Select * from Restaurant;
+
+RESTAURANTID RESTAURANTNAME                 CITY
+------------ ------------------------------ ------------------------------
+EMAIL                          MOBILE              RATING
+------------------------------ --------------- ----------
+           1 Flavors Of South               Chennai
+flavors@gmail.com              9876501234             4.3
+
+           2 Spices Point                   Bangalore
+spicespoint@gmail.com          9854321000             4.6
+
+           3 Pizza Paradise                 Mumbai
+paradise@gmail.com             9988776655             4.4
+
+
+
+--------------------------------------------------------------------------------------------------------------
+
+//DeleteRestaurantById Procedure
+
+Create Or Replace Procedure DeleteRestaurantById(
+  R_id In Number
+)
+Is
+Begin
+  Delete From Restaurant Where RestaurantId = R_id;
+
+  If Sql%Rowcount = 0 Then
+    dbms_output.put_line('No restaurant found to delete.');
+  Else
+    dbms_output.put_line('Restaurant deleted successfully.');
+  End If;
+End;
+/
+
+
+--------------------------------------------------------------------------------------------------------------
+
+//SearchRestaurantById With OUT Parameters
+
+Create Or Replace Procedure SearchRestaurantById(
+  R_id In Number,
+  P_name Out Varchar2,
+  P_city Out Varchar2,
+  P_email Out Varchar2,
+  P_mobile Out Varchar2,
+  P_rating Out Number
+)
+Is
+Begin
+  Select RestaurantName, City, Email, Mobile, Rating
+  Into P_name, P_city, P_email, P_mobile, P_rating
+  From Restaurant Where RestaurantId = R_id;
+Exception
+  When No_Data_Found Then
+    P_name := Null;
+    P_city := Null;
+    P_email := Null;
+    P_mobile := Null;
+    P_rating := Null;
+End;
+/
+
+
+
+SQL>  EXEC DeleteRestaurantById(03);
+Restaurant deleted successfully.
+
+PL/SQL procedure successfully completed.
+
+SQL> rollback;
+
+Rollback complete.
+
+
+
+SQL> Select * From Restaurant;
+
+RESTAURANTID RESTAURANTNAME                 CITY
+------------ ------------------------------ ------------------------------
+EMAIL                          MOBILE              RATING
+------------------------------ --------------- ----------
+           1 Flavors Of South               Chennai
+flavors@gmail.com              9876501234             4.3
+
+           2 Spices Point                   Bangalore
+spicespoint@gmail.com          9854321000             4.6
+
+           3 Pizza Paradise                 Mumbai
+paradise@gmail.com             9988776655             4.4
+
+
+
+
+----------------------------------------------------------------------------------------------------------------
+
+//Cursor Block to Print All Restaurant Details
+
+
+CREATE OR REPLACE PROCEDURE PrintAllRestaurants
+Is
+  Cursor C_rest Is Select * From Restaurant;
+  V_rest C_rest%Rowtype;
+Begin
+  Open C_rest;
+  Loop
+    Fetch C_rest Into V_rest;
+    Exit When C_rest%NotFound;
+
+    Dbms_Output.Put_Line('ID: '|| V_rest.RestaurantId ||', Name: '|| V_rest.RestaurantName ||
+                         ', City: '|| V_rest.City ||', Email: '|| V_rest.Email ||
+                         ', Mobile: '|| V_rest.Mobile ||', Rating: '|| V_rest.Rating);
+  End Loop;
+  Close C_rest;
+End;
+/
+
+EXEC PrintAllRestaurants;
+
+Output:
+
+SQL> EXEC PrintAllRestaurants;
+ID: 1, Name: Flavors Of South, City: Chennai, Email: flavors@gmail.com, Mobile:
+9876501234, Rating: 4.3
+ID: 2, Name: Spices Point, City: Bangalore, Email: spicespoint@gmail.com,
+Mobile: 9854321000, Rating: 4.6
+ID: 3, Name: Pizza Paradise, City: Mumbai, Email: paradise@gmail.com, Mobile:
+9988776655, Rating: 4.4
+
+PL/SQL procedure successfully completed.
+
+
+
+
+----------------------------------------------------------------------------------------------------------------
+
+// Trigger for Insert on Restaurant
+
+Create Or Replace Trigger Trg_InsertRestaurant
+After Insert On Restaurant
+For Each Row
+Begin
+  Insert Into RestaurantBackup(RbId, RestaurantId, RestaurantName, City, Email, Mobile, Rating, Operation)
+  Values (
+    RestaurantBackup_seq.NextVal,
+    :New.RestaurantId,
+    :New.RestaurantName,
+    :New.City,
+    :New.Email,
+    :New.Mobile,
+    :New.Rating,
+    'INSERT'
+  );
+End;
+/
+
+SQL> Insert Into Restaurant Values(4, 'Tandoori Treats', 'Hyderabad', 'tandoori@gmail.com', '9123456780', 4.2);
+
+1 row created.
+
+
+
+SQL> INSERT INTO Restaurant (RestaurantId, RestaurantName, City, Email, Mobile, Rating)
+  2  VALUES (5, 'Delhi Darbar', 'Delhi', 'delhidarbar@gmail.com', '9822233445', 4.3);
+
+1 row created.
+
+SQL>
+SQL> -- Insert for Restaurant ID 6
+SQL> INSERT INTO Restaurant (RestaurantId, RestaurantName, City, Email, Mobile, Rating)
+  2  VALUES (6, 'Bombay Biryani', 'Mumbai', 'biryani@gmail.com', '9833344556', 4.1);
+
+1 row created.
+----------------------------------------------------------------------------------------------------------------
+
+//Trigger for Update on Restaurant
+
+Create Or Replace Trigger Trg_UpdateRestaurant
+After Update On Restaurant
+For Each Row
+Begin
+  Insert Into RestaurantBackup(RbId, RestaurantId, RestaurantName, City, Email, Mobile, Rating, Operation)
+  Values (
+    RestaurantBackup_seq.NextVal,
+    :Old.RestaurantId,
+    :Old.RestaurantName,
+    :Old.City,
+    :Old.Email,
+    :Old.Mobile,
+    :Old.Rating,
+    'UPDATE'
+  );
+End;
+/
+
+
+
+
+SQL> UPDATE Restaurant
+  2  SET RestaurantName = 'Spice Delight',
+  3      City = 'Chennai',
+  4      Email = 'spicedelight@gmail.com',
+  5      Mobile = '9876543210',
+  6      Rating = 4.5
+  7  WHERE RestaurantId = 4;
+
+1 row updated.
+
+SQL> commit;
+
+Commit complete.
+
+----------------------------------------------------------------------------------------------------------------
+
+//Trigger for Delete on Restaurant
+
+Create Or Replace Trigger Trg_DeleteRestaurant
+After Delete On Restaurant
+For Each Row
+Begin
+  Insert Into RestaurantBackup(RbId, RestaurantId, RestaurantName, City, Email, Mobile, Rating, Operation)
+  Values (
+    RestaurantBackup_seq.NextVal,
+    :Old.RestaurantId,
+    :Old.RestaurantName,
+    :Old.City,
+    :Old.Email,
+    :Old.Mobile,
+    :Old.Rating,
+    'DELETE'
+  );
+End;
+/
+
+
+DELETE FROM Restaurant WHERE restaurantId = 6;
+
+
+
+Output:
+
+SQL> DELETE FROM Restaurant WHERE restaurantId = 6;
+
+1 row deleted.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> Select* From Restaurant;
+
+RESTAURANTID RESTAURANTNAME                 CITY
+------------ ------------------------------ ------------------------------
+EMAIL                          MOBILE              RATING
+------------------------------ --------------- ----------
+           1 Flavors Of South               Chennai
+flavors@gmail.com              9876501234             4.3
+
+           2 Spices Point                   Bangalore
+spicespoint@gmail.com          9854321000             4.6
+
+           3 Pizza Paradise                 Mumbai
+paradise@gmail.com             9988776655             4.4
+
+
+RESTAURANTID RESTAURANTNAME                 CITY
+------------ ------------------------------ ------------------------------
+EMAIL                          MOBILE              RATING
+------------------------------ --------------- ----------
+           4 Spice Delight                  Chennai
+spicedelight@gmail.com         9876543210             4.5
+
+           5 Delhi Darbar                   Delhi
+delhidarbar@gmail.com          9822233445             4.3
+
+
+
+----------------------------------------------------------------------------------------------------------------
+
+//View Trigger Results (Backup Table)
+
+Select * From RestaurantBackup Order By ActivityOn Desc;
+
+
+
+      RBID RESTAURANTID RESTAURANTNAME
+---------- ------------ ------------------------------
+CITY                           EMAIL                          MOBILE
+------------------------------ ------------------------------ ---------------
+    RATING OPERATION                      ACTIVITYO
+---------- ------------------------------ ---------
+        30            6 Bombay Biryani
+Mumbai                         biryani@gmail.com              9833344556
+       4.1 DELETE                         04-JUN-25
+
+        29            4 Tandoori Treats
+Hyderabad                      tandoori@gmail.com             9123456780
+       4.2 UPDATE                         04-JUN-25
+
+      RBID RESTAURANTID RESTAURANTNAME
+---------- ------------ ------------------------------
+CITY                           EMAIL                          MOBILE
+------------------------------ ------------------------------ ---------------
+    RATING OPERATION                      ACTIVITYO
+---------- ------------------------------ ---------
+
+        28            6 Bombay Biryani
+Mumbai                         biryani@gmail.com              9833344556
+       4.1 INSERT                         04-JUN-25
+
+        27            5 Delhi Darbar
+Delhi                          delhidarbar@gmail.com          9822233445
+
+      RBID RESTAURANTID RESTAURANTNAME
+---------- ------------ ------------------------------
+CITY                           EMAIL                          MOBILE
+------------------------------ ------------------------------ ---------------
+    RATING OPERATION                      ACTIVITYO
+---------- ------------------------------ ---------
+       4.3 INSERT                         04-JUN-25
+
+        26            4 Tandoori Treats
+Hyderabad                      tandoori@gmail.com             9123456780
+       4.2 INSERT                         04-JUN-25
+
+        24            3 Pizza Palace
+
+      RBID RESTAURANTID RESTAURANTNAME
+---------- ------------ ------------------------------
+CITY                           EMAIL                          MOBILE
+------------------------------ ------------------------------ ---------------
+    RATING OPERATION                      ACTIVITYO
+---------- ------------------------------ ---------
+Mumbai                         pizza@gmail.com                9988776655
+       4.1 UPDATE                         04-JUN-25
+
+        23            3 Pizza Palace
+Mumbai                         pizza@gmail.com                9988776655
+       4.1 INSERT                         04-JUN-25
+
+
+      RBID RESTAURANTID RESTAURANTNAME
+---------- ------------ ------------------------------
+CITY                           EMAIL                          MOBILE
+------------------------------ ------------------------------ ---------------
+    RATING OPERATION                      ACTIVITYO
+---------- ------------------------------ ---------
+        22            2 Spices Point
+Bangalore                      spicespoint@gmail.com          9854321000
+       4.6 INSERT                         04-JUN-25
+
+        21            1 Flavors Of South
+Chennai                        flavors@gmail.com              9876501234
+       4.3 INSERT                         04-JUN-25
+
+      RBID RESTAURANTID RESTAURANTNAME
+---------- ------------ ------------------------------
+CITY                           EMAIL                          MOBILE
+------------------------------ ------------------------------ ---------------
+    RATING OPERATION                      ACTIVITYO
+---------- ------------------------------ ---------
+
+
+9 rows selected.
+
+----------------------------------------------------------------------------------------------------------------
+
+//Viewing restaurant and RestaurantBackup Table
+
+Select * From Restaurant;
+
+
+
+
+RESTAURANTID RESTAURANTNAME                 CITY
+------------ ------------------------------ ------------------------------
+EMAIL                          MOBILE              RATING
+------------------------------ --------------- ----------
+           1 Flavors Of South               Chennai
+flavors@gmail.com              9876501234             4.3
+
+           2 Spices Point                   Bangalore
+spicespoint@gmail.com          9854321000             4.6
+
+           3 Pizza Paradise                 Mumbai
+paradise@gmail.com             9988776655             4.4
+
+
+RESTAURANTID RESTAURANTNAME                 CITY
+------------ ------------------------------ ------------------------------
+EMAIL                          MOBILE              RATING
+------------------------------ --------------- ----------
+           4 Spice Delight                  Chennai
+spicedelight@gmail.com         9876543210             4.5
+
+           5 Delhi Darbar                   Delhi
+delhidarbar@gmail.com          9822233445             4.3
+
+
+
+
+
+Select * From RestaurantBackup;
+
+
+
+
+      RBID RESTAURANTID RESTAURANTNAME
+---------- ------------ ------------------------------
+CITY                           EMAIL                          MOBILE
+------------------------------ ------------------------------ ---------------
+    RATING OPERATION                      ACTIVITYO
+---------- ------------------------------ ---------
+        21            1 Flavors Of South
+Chennai                        flavors@gmail.com              9876501234
+       4.3 INSERT                         04-JUN-25
+
+        22            2 Spices Point
+Bangalore                      spicespoint@gmail.com          9854321000
+       4.6 INSERT                         04-JUN-25
+
+      RBID RESTAURANTID RESTAURANTNAME
+---------- ------------ ------------------------------
+CITY                           EMAIL                          MOBILE
+------------------------------ ------------------------------ ---------------
+    RATING OPERATION                      ACTIVITYO
+---------- ------------------------------ ---------
+
+        23            3 Pizza Palace
+Mumbai                         pizza@gmail.com                9988776655
+       4.1 INSERT                         04-JUN-25
+
+        24            3 Pizza Palace
+Mumbai                         pizza@gmail.com                9988776655
+
+      RBID RESTAURANTID RESTAURANTNAME
+---------- ------------ ------------------------------
+CITY                           EMAIL                          MOBILE
+------------------------------ ------------------------------ ---------------
+    RATING OPERATION                      ACTIVITYO
+---------- ------------------------------ ---------
+       4.1 UPDATE                         04-JUN-25
+
+        26            4 Tandoori Treats
+Hyderabad                      tandoori@gmail.com             9123456780
+       4.2 INSERT                         04-JUN-25
+
+        27            5 Delhi Darbar
+
+      RBID RESTAURANTID RESTAURANTNAME
+---------- ------------ ------------------------------
+CITY                           EMAIL                          MOBILE
+------------------------------ ------------------------------ ---------------
+    RATING OPERATION                      ACTIVITYO
+---------- ------------------------------ ---------
+Delhi                          delhidarbar@gmail.com          9822233445
+       4.3 INSERT                         04-JUN-25
+
+        28            6 Bombay Biryani
+Mumbai                         biryani@gmail.com              9833344556
+       4.1 INSERT                         04-JUN-25
+
+
+      RBID RESTAURANTID RESTAURANTNAME
+---------- ------------ ------------------------------
+CITY                           EMAIL                          MOBILE
+------------------------------ ------------------------------ ---------------
+    RATING OPERATION                      ACTIVITYO
+---------- ------------------------------ ---------
+        29            4 Tandoori Treats
+Hyderabad                      tandoori@gmail.com             9123456780
+       4.2 UPDATE                         04-JUN-25
+
+        30            6 Bombay Biryani
+Mumbai                         biryani@gmail.com              9833344556
+       4.1 DELETE                         04-JUN-25
+
+      RBID RESTAURANTID RESTAURANTNAME
+---------- ------------ ------------------------------
+CITY                           EMAIL                          MOBILE
+------------------------------ ------------------------------ ---------------
+    RATING OPERATION                      ACTIVITYO
+---------- ------------------------------ ---------
+
+
+9 rows selected.
+
+
+
+
+
+
+
+
+
+
