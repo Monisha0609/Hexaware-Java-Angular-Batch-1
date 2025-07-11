@@ -1,0 +1,74 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #e8f5e9; /* Light green background */
+  min-height: 100vh;
+}
+
+/* Heading */
+h2 {
+  font-size: 1.6rem;
+  color: #00796b; /* Teal color */
+  margin-bottom: 25px;
+}
+
+/* Form container */
+form {
+  width: 100%;
+  max-width: 500px;
+  padding: 25px 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Labels */
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+/* Inputs, Textarea, Selects */
+input[type="text"],
+input[type="date"],
+textarea,
+select {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #43a047; /* Green focus */
+  outline: none;
+}
+
+/* Submit Button */
+button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #2e7d32; /* Dark green */
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #1b5e20; /* Darker green */
+}

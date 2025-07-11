@@ -1,0 +1,14 @@
+<p>to-do works!</p>
+
+<a [routerLink]="['/ToDo',{outlets:{'Task':['TaskList']}}]">TaskList</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a [routerLink]="['/ToDo',{outlets:{'Task':['TaskAdd']}}]">TaskAdd</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a [routerLink]="['/ToDo',{outlets:{'Task':['TaskUpdate']}}]">TaskUpdate</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a [routerLink]="['/ToDo',{outlets:{'Task':['TaskDelete']}}]">TaskDelete</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+<a [routerLink]="['/home']">Home Page</a>
+<hr/>
+<router-outlet name="Task"></router-outlet>

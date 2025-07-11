@@ -1,0 +1,9 @@
+<!-- task-delete.html -->
+<h2>Delete Task</h2>
+
+<form #deleteForm="ngForm" (ngSubmit)="onDelete()">
+  <label for="id">Enter Task ID to Delete:</label>
+  <input type="number" name="id" id="id" [(ngModel)]="id" required />
+
+  <button type="submit">Delete Task</button>
+</form>

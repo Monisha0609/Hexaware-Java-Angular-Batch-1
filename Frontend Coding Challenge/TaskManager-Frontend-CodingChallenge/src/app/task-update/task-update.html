@@ -1,0 +1,23 @@
+<h2>Update Task</h2>
+<form #updateForm="ngForm" (ngSubmit)="updateTask(updateForm)">
+  <label>Title:</label>
+  <input type="text" name="title" [(ngModel)]="task.title" required /><br />
+
+  <label>Description:</label>
+  <textarea name="description" [(ngModel)]="task.description" required></textarea><br />
+
+  <label>Due Date:</label>
+  <input type="date" name="dueDate" [(ngModel)]="task.dueDate" required /><br />
+
+  <label>Priority:</label>
+  <select name="priority" [(ngModel)]="task.priority" required>
+    <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
+  </select><br />
+
+  <label>Status:</label>
+  <select name="status" [(ngModel)]="task.status" required>
+    <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+  </select><br />
+
+  <button type="submit">Update</button>
+</form>

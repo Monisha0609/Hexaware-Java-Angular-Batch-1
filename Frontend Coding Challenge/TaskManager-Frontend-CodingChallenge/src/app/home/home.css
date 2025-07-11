@@ -1,0 +1,36 @@
+/* Center the content */
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+  font-family: Arial, sans-serif;
+}
+
+/* Style for heading */
+p {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+/* Style the links */
+a {
+  text-decoration: none;
+  padding: 10px 20px;
+  margin: 0 10px;
+  border-radius: 5px;
+  background-color: #1976d2;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+a:hover {
+  background-color: #125ea8;
+}
+
+/* Responsive spacing */
+a + a {
+  margin-left: 15px;
+}
